@@ -1,12 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     const header = document.getElementById('main-header');
-    const spacer = document.querySelector('.header-spacer');
+    //    const spacer = document.querySelector('.header-spacer');
 
     // Scroll Animation Logic
     let ticking = false;
-    // Maximum scroll distance to complete the animation (e.g., 500px or window height)
-    // Using window.innerHeight means it animation completes exactly when one full screen is scrolled
-
     function updateScroll() {
         const scrollY = window.scrollY;
         const maxScroll = window.innerHeight - 80; // Stop shrinking when header is 80px
@@ -15,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.body.style.setProperty('--scroll', progress);
 
-        // Toggle 'shrink' class just for final state styles if needed (like removing pointer events on hidden elements)
         if (progress >= 0.99) {
             header.classList.add('shrunk-state');
         } else {
@@ -31,14 +27,11 @@ document.addEventListener('DOMContentLoaded', () => {
             ticking = true;
         }
     });
-
-    // Initial call
     updateScroll();
 
 
-    // Optional: Smooth scroll for anchor links if we add them
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
+        anchor.addEventListener('click', function(e) {
             e.preventDefault();
             document.querySelector(this.getAttribute('href')).scrollIntoView({
                 behavior: 'smooth'

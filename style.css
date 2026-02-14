@@ -1,9 +1,6 @@
 :root {
-    /* Dark Mode (Matte Starry) - Default */
     --bg-color: #0d0d11;
-    /* Matte almost-black */
     --card-bg: rgba(255, 255, 255, 0.03);
-    /* Subtle white overlay */
     --text-primary: #e2e8f0;
     --text-secondary: #94a3b8;
     --accent: #38bdf8;
@@ -13,18 +10,15 @@
     --header-height-large: 100vh;
     --header-height-small: 80px;
     --transition-speed: 0.4s;
-    /* Slightly faster for snappier feel */
     --container-width: 1200px;
 }
 
 body.light-mode {
-    /* Morning Dawn (Bright) */
     --bg-color: #fff7ed;
     --card-bg: rgba(255, 255, 255, 0.8);
     --text-primary: #1e293b;
     --text-secondary: #475569;
     --accent: #f59e0b;
-    /* Sunny orange/gold */
     --accent-glow: rgba(245, 158, 11, 0.3);
     --border-color: rgba(0, 0, 0, 0.05);
 }
@@ -58,12 +52,10 @@ body {
 }
 
 body.light-mode {
-    /* Morning Dawn Gradient */
     background-image:
         linear-gradient(180deg, #ffedd5 0%, #e0f2fe 100%);
 }
 
-/* Theme Toggle Button */
 .theme-toggle {
     position: absolute;
     top: 2rem;
@@ -81,7 +73,6 @@ body.light-mode {
     font-size: 1.2rem;
     transition: all 0.3s;
     z-index: 101;
-    /* Above everything */
 }
 
 .theme-toggle:hover {
@@ -101,14 +92,8 @@ a:hover {
     color: #fff;
 }
 
-/* --- HEADER --- */
 header {
     background-color: var(--bg-color);
-    /* Fallback */
-    /* Dynamic Background: Transparent at top, solid at bottom */
-    /* We can interpolate the alpha channel using the variable, but standard CSS colors don't support calc in alpha easily without new syntax. 
-       Workaround: Use an overlay or just a solid color that becomes visible. 
-       Or better: Use backdrop filter mostly. */
     background-color: transparent;
 
     width: 100%;
@@ -117,11 +102,6 @@ header {
     left: 0;
     z-index: 100;
 
-    /* Dynamic Height based on Scroll */
-    /* height = (1 - scroll) * (large - small) + small */
-    /* But simplified: calculate height based on remaining space? 
-       Actually: Height = 100vh - (100vh - 80px) * scroll 
-    */
     --current-height: calc(100vh - (100vh - var(--header-height-small)) * var(--scroll));
     height: var(--current-height);
 
@@ -130,35 +110,26 @@ header {
     align-items: center;
     justify-content: center;
 
-    /* Remove transition on height for instant scroll-locking */
     transition: background-color 0.3s, box-shadow 0.3s, border-bottom 0.3s;
 
     will-change: height;
-    overflow: hidden;
-    /* Hide content as it shrinks */
 
-    /* Border and Shadow appear as we scroll */
+    overflow: hidden;
     border-bottom: 1px solid rgba(255, 255, 255, calc(var(--scroll) * 0.1));
     box-shadow: 0 4px 30px rgba(0, 0, 0, calc(var(--scroll) * 0.2));
-
-    /* Add background opacity as we scroll */
-    /* Using a pseudo-element for the background to control opacity */
 }
 
-/* Background overlay */
 header::before {
     content: '';
     position: absolute;
     inset: 0;
     background-color: var(--bg-color);
     opacity: var(--scroll);
-    /* 0 to 1 */
     z-index: -1;
     backdrop-filter: blur(10px);
     pointer-events: none;
 }
 
-/* Light mode bg adjustment */
 body.light-mode header::before {
     background-color: rgba(255, 255, 255, 0.95);
 }
@@ -167,53 +138,22 @@ body.light-mode header::before {
     width: 100%;
     max-width: var(--container-width);
     display: flex;
-    /* Transformation from column (large) to row (small) 
-       is hard to animate smoothly with variable. 
-       Instead, keep it Flex Row always, but adjust positions/margins?
-       Or, keep Column and just squish it?
-       
-       Let's try a hybrid approach:
-       Flex-direction change is abrupt.
-       We will keep it Row-ish but wrap?
-       
-       Actually, to match the "hero" look, it's centered column.
-       To match "nav" look, it's spaced row.
-       
-       Let's use position absolute for moving parts or transforms.
-    */
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     height: 100%;
-    /* At scroll=0, we want it to look like it's in the center/column.
-       We can achieve this by pushing elements with margins/transforms based on calc.
-    */
     position: relative;
 }
-
-/* To simulate the Column -> Row transition smoothly:
-   We will position the Profile Container.
-   At scroll 0: Centered vertically and horizontally (or left aligned as per previous design).
-   At scroll 1: Aligned left, vertically centered.
-   
-   Actually, previous design was:
-   Large: Col, Left aligned, vertically centered.
-   Small: Row, Space between.
-*/
 
 .profile-container {
     display: flex;
     align-items: center;
-    /* Gap shrinks */
     gap: calc(2rem - (1rem * var(--scroll)));
     transform-origin: left center;
-    /* We don't need to change flex direction if we just hide the extra stuff */
     flex-direction: row;
 }
 
-/* Avatar Scaling */
 .avatar {
-    /* 120px to 45px */
     --size: calc(120px - (75px * var(--scroll)));
     width: var(--size);
     height: var(--size);
@@ -245,41 +185,27 @@ body.light-mode header::before {
     white-space: nowrap;
 }
 
-/* Hide Contact links in small mode? Or scale them? 
-   Let's keep them but fade them out/scale down if space is needed.
-   User asked for "information is decreasing".
-*/
 .contact-links {
     display: flex;
     gap: 1.5rem;
     font-size: 1rem;
-    /* Scale down slightly and move up closer to name */
     transform-origin: left top;
     transform: scale(calc(1 - (0.2 * var(--scroll)))) translateY(calc(var(--scroll) * -5px));
     opacity: 1;
-    /* Keep visible */
 }
 
-/* Hero Text - The Intro Paragraph */
 .hero-text {
     position: absolute;
     left: 0;
-    /* Move it down from the Profile info */
     top: calc(50% + 80px);
-    /* Initial position */
     transform: translateY(calc(var(--scroll) * -100px));
-    /* Move up as we scroll */
     font-size: 1.25rem;
     color: var(--text-secondary);
     max-width: 800px;
-
-    /* Fade out */
     opacity: calc(1 - (var(--scroll) * 1.5));
     pointer-events: none;
-    /* Just text */
 }
 
-/* Scroll Button */
 .scroll-down-btn {
     position: absolute;
     bottom: 2rem;
@@ -292,10 +218,7 @@ body.light-mode header::before {
     border-radius: 30px;
     cursor: pointer;
     font-size: 0.9rem;
-
-    /* Fade out very fast as we scroll */
     opacity: calc(1 - (var(--scroll) * 4));
-
     transition: background-color 0.3s, border-color 0.3s, color 0.3s;
     display: flex;
     flex-direction: column;
@@ -335,41 +258,26 @@ body.light-mode header::before {
     }
 }
 
-/* When fully shrunk, hide elements properly to prevent clicks */
 header.shrunk-state .hero-text,
 header.shrunk-state .scroll-down-btn {
     visibility: hidden;
 }
 
-
-/* THEME TOGGLE POSITIONING */
-/* It needs to move from top-right (absolute) to align with row in navbar?
-   Currently it's absolute top 2rem right 2rem.
-   In header 80px height, 2rem/2rem might is okay, but let's adjust.
-*/
 .theme-toggle {
     top: calc(2rem + (10px * var(--scroll)));
-    /* Nudge it if needed */
     right: 2rem;
-    /* Subtle scale on scroll */
     transform: scale(calc(1 - (0.2 * var(--scroll))));
-    /* 1 -> 0.8 */
 }
 
-/* Keep the theme toggle vertically centered with the header
-   once the header has finished shrinking */
 header.shrunk-state .theme-toggle {
     top: 50%;
     transform: translateY(-50%) scale(0.8);
 }
 
-/* Spacer should reflect max height so content sits below the 100vh header initially */
 .header-spacer {
     height: 100vh;
 }
 
-
-/* --- MAIN CONTENT --- */
 .header-spacer {
     height: var(--header-height-large);
     transition: height var(--transition-speed);
@@ -561,6 +469,4 @@ footer p {
         flex-direction: row;
         gap: 1rem;
     }
-
-    /* Keep header full screen on mobile too, but maybe adjust padding */
 }
